@@ -1,0 +1,17 @@
+
+I've written basic question list.
+“How do I safely restart a Linux server without downtime?” (restart)
+“Why is my VPN not connecting, could it be a firewall issue?” (network)
+“My SQL queries are too slow, how can I optimize them?” (database)
+“The CPU usage on my app server is constantly 95%, what should I check?” (cpu)
+“How can I detect if my Java app has a memory leak?” (memory)
+“Disk space is almost full on production, what’s safe to clean up?” (disk)
+“How do I restart a systemd service in Linux?” (service)
+“One of my Docker containers keeps failing to restart, how do I fix it?” (docker)
+“Why is my Kubernetes pod restarting again and again?” (kubernetes)
+“My website shows SSL handshake failure, how do I resolve this?” (ssl)
+“Emails are not being delivered from my app, SMTP error shows connection timeout.” (email)
+“Why can’t I SSH into my AWS EC2 instance after reboot?” (cloud)
+“Getting ‘permission denied’ error in GCP IAM roles, how do I fix this?” (cloud)
+“I can’t log into my Linux server via SSH, what should I check?” (login)
+“How to enforce multi-factor authentication (MFA) for all Windows users?” (login)
