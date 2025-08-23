@@ -17,7 +17,7 @@ function extractQueryText(text: string) {
     const obj = JSON.parse(text)
     if (obj.query) return obj.query
   } catch (_) {
-    console.log("App.tsx :: extractQueryText : could not extract querytext.")
+    // ignore if not JSON
   }
   return text
 }
@@ -30,6 +30,7 @@ export default function App() {
   const [history, setHistory] = useState<SearchQuery[]>([])
   const [selectedArticle, setSelectedArticle] = useState<string | null>(null)
   const [showHistory, setShowHistory] = useState(false)
+  const [feedback, setFeedback] = useState<Record<number, 'up' | 'down' | null>>({})
 
   // load history on mount
   useEffect(() => {
@@ -66,6 +67,16 @@ export default function App() {
 
   function openArticle(articleId: string) {
     setSelectedArticle(articleId)
+  }
+
+  function handleFeedback(queryId: number, type: 'up' | 'down') {
+    setFeedback(prev => ({
+      ...prev,
+      [queryId]: prev[queryId] === type ? null : type
+    }))
+    
+    // Here you can add API call to save feedback to backend
+    console.log(`Feedback for query ${queryId}: ${type}`)
   }
 
   return (
@@ -133,8 +144,42 @@ export default function App() {
 
                 <div className="mb-6">
                   <div className="text-sm text-slate-400 mb-2">AI Summary:</div>
-                  <div className="text-white leading-relaxed">
+                  <div className="text-white leading-relaxed mb-4">
                     {latest.aiSummaryAnswer}
+                  </div>
+                  
+                  {/* Feedback Section */}
+                  <div className="flex items-center gap-3 pt-3 border-t border-white/10">
+                    <span className="text-sm text-slate-400">Was this helpful?</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleFeedback(latest.id, 'up')}
+                        className={`p-2 rounded-lg transition-all ${
+                          feedback[latest.id] === 'up'
+                            ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                            : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-green-400 border border-white/10'
+                        }`}
+                      >
+                        👍
+                      </button>
+                      <button
+                        onClick={() => handleFeedback(latest.id, 'down')}
+                        className={`p-2 rounded-lg transition-all ${
+                          feedback[latest.id] === 'down'
+                            ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                            : 'bg-white/5 text-slate-400 hover:bg-white/10 hover:text-red-400 border border-white/10'
+                        }`}
+                      >
+                        👎
+                      </button>
+                    </div>
+                    {feedback[latest.id] && (
+                      <span className={`text-sm ${
+                        feedback[latest.id] === 'up' ? 'text-green-400' : 'text-red-400'
+                      }`}>
+                        Thanks for your feedback!
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -288,8 +333,32 @@ export default function App() {
                     <div className="text-sm text-white mb-1 line-clamp-2">
                       {extractQueryText(item.queryText)}
                     </div>
-                    <div className="text-xs text-slate-400">
-                      {new Date(item.createdAt).toLocaleDateString()}
+                    <div className="flex items-center justify-between mt-2">
+                      <div className="text-xs text-slate-400">
+                        {new Date(item.createdAt).toLocaleDateString()}
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <button
+                          onClick={() => handleFeedback(item.id, 'up')}
+                          className={`p-1 rounded transition-all ${
+                            feedback[item.id] === 'up'
+                              ? 'text-green-400'
+                              : 'text-slate-500 hover:text-green-400'
+                          }`}
+                        >
+                          👍
+                        </button>
+                        <button
+                          onClick={() => handleFeedback(item.id, 'down')}
+                          className={`p-1 rounded transition-all ${
+                            feedback[item.id] === 'down'
+                              ? 'text-red-400'
+                              : 'text-slate-500 hover:text-red-400'
+                          }`}
+                        >
+                          👎
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
